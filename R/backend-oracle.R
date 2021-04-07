@@ -114,6 +114,15 @@ sql_query_wrap.Oracle <- function(con, from, name = unique_subquery_name(), ...)
   }
 }
 
+#' @export
+sql_query_save.Oracle <- function(con, sql, name, temporary = TRUE, ...) {
+  build_sql(
+    "CREATE ", if (temporary) sql("GLOBAL TEMPORARY "), "TABLE \n",
+    as.sql(name, con), " AS ", sql,
+    con = con
+  )
+}
+
 # registered onLoad located in the zzz.R script
 setdiff.tbl_Oracle <- function(x, y, copy = FALSE, ...) {
   # Oracle uses MINUS instead of EXCEPT for this operation:

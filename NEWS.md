@@ -1,5 +1,7 @@
 # dbplyr (development version)
 
+* `compute()` now works with `temporary = TRUE` for Oracle (@mgirlich, #621).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)

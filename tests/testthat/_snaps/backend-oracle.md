@@ -35,3 +35,20 @@
       ON (decode(`LHS`.`x`, `RHS`.`x`, 0, 1) = 0)
       
 
+---
+
+    Code
+      sql_query_save(con, sql("SELECT * FROM foo"), in_schema("schema", "tbl"))
+    Output
+      <SQL> CREATE GLOBAL TEMPORARY TABLE 
+      `schema`.`tbl` AS SELECT * FROM foo
+
+---
+
+    Code
+      sql_query_save(con, sql("SELECT * FROM foo"), in_schema("schema", "tbl"),
+      temporary = FALSE)
+    Output
+      <SQL> CREATE TABLE 
+      `schema`.`tbl` AS SELECT * FROM foo
+
