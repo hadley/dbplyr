@@ -121,7 +121,7 @@ simulate_mssql <- function(version = "15.0") {
       bitwShiftR     = sql_not_supported("bitwShiftR"),
 
       `if`           = mssql_sql_if,
-      if_else        = function(condition, true, false) mssql_sql_if(condition, true, false),
+      if_else        = function(condition, true, false, missing = NULL) mssql_sql_if(condition, true, false, missing),
       ifelse         = function(test, yes, no) mssql_sql_if(test, yes, no),
       case_when      = mssql_case_when,
 
@@ -351,9 +351,13 @@ mssql_infix_boolean <- function(if_bit, if_bool) {
   }
 }
 
-mssql_sql_if <- function(cond, if_true, if_false = NULL) {
+mssql_sql_if <- function(cond, if_true, if_false = NULL, missing = NULL) {
   cond <- with_mssql_bool(cond)
-  sql_expr(IIF(!!cond, !!if_true, !!if_false))
+  if (is.null(missing)) {
+    sql_expr(IIF(!!cond, !!if_true, !!if_false))
+  } else {
+    sql_if(con, if_true, if_false, missing)
+  }
 }
 
 mssql_case_when <- function(...) {

@@ -1,5 +1,7 @@
 # dbplyr (development version)
 
+* `if_else()` now supports the `missing` argument (@mgirlich, #641).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)

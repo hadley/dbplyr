@@ -1,8 +1,12 @@
-sql_if <- function(cond, if_true, if_false = NULL) {
+sql_if <- function(cond, if_true, if_false = NULL, missing = NULL) {
   build_sql(
     "CASE WHEN (", cond, ")", " THEN (", if_true, ")",
     if (!is.null(if_false))
       build_sql(" WHEN NOT(", cond, ") THEN (", if_false, ")"),
+    if (!is.null(missing)) {
+      missing_cond <- translate_sql(is.na(!!cond), con = sql_current_con())
+      build_sql(" WHEN ", missing_cond, " THEN (", missing, ")")
+    },
     " END"
   )
 }
