@@ -21,11 +21,15 @@
       union(lf, lf)
     Output
       <SQL>
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
       UNION
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
 
 ---
 
@@ -33,11 +37,15 @@
       setdiff(lf, lf)
     Output
       <SQL>
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
       EXCEPT
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
 
 ---
 
@@ -45,11 +53,15 @@
       intersect(lf, lf)
     Output
       <SQL>
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
       INTERSECT
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
 
 ---
 
@@ -57,11 +69,15 @@
       union(lf, lf, all = TRUE)
     Output
       <SQL>
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
       UNION ALL
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
 
 ---
 
@@ -69,11 +85,15 @@
       setdiff(lf, lf, all = TRUE)
     Output
       <SQL>
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
       EXCEPT ALL
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
 
 ---
 
@@ -81,9 +101,13 @@
       intersect(lf, lf, all = TRUE)
     Output
       <SQL>
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
       INTERSECT ALL
-      (SELECT *
-      FROM `df`)
+      (
+        SELECT *
+        FROM `df`
+      )
 

@@ -59,8 +59,8 @@ ident_q <- function(...) {
 }
 
 #' @export
-escape.ident_q <- function(x, parens = FALSE, collapse = ", ", con = NULL) {
-  sql_vector(names_to_as(x, names2(x), con = con), parens, collapse, con = con)
+escape.ident_q <- function(x, parens = FALSE, collapse = ", ", con = NULL, align_as = FALSE) {
+  sql_vector(names_to_as(x, names2(x), con = con, align_as = align_as), parens, collapse, con = con)
 }
 
 #' @export

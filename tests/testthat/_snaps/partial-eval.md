@@ -4,7 +4,9 @@
       lf %>% summarise(across(a:b, "log"))
     Output
       <SQL>
-      SELECT LN(`a`) AS `a`, LN(`b`) AS `b`
+      SELECT
+        LN(`a`) AS `a`,
+        LN(`b`) AS `b`
       FROM `df`
 
 ---
@@ -13,7 +15,9 @@
       lf %>% summarise(across(a:b, "log", base = 2))
     Output
       <SQL>
-      SELECT LOG(2.0, `a`) AS `a`, LOG(2.0, `b`) AS `b`
+      SELECT
+        LOG(2.0, `a`) AS `a`,
+        LOG(2.0, `b`) AS `b`
       FROM `df`
 
 ---
@@ -22,7 +26,9 @@
       lf %>% summarise(across(a, c("log", "exp")))
     Output
       <SQL>
-      SELECT LN(`a`) AS `a_log`, EXP(`a`) AS `a_exp`
+      SELECT
+        LN(`a`) AS `a_log`,
+        EXP(`a`) AS `a_exp`
       FROM `df`
 
 # across() translates functions
@@ -31,7 +37,9 @@
       lf %>% summarise(across(a:b, log))
     Output
       <SQL>
-      SELECT LN(`a`) AS `a`, LN(`b`) AS `b`
+      SELECT
+        LN(`a`) AS `a`,
+        LN(`b`) AS `b`
       FROM `df`
 
 ---
@@ -40,7 +48,9 @@
       lf %>% summarise(across(a:b, log, base = 2))
     Output
       <SQL>
-      SELECT LOG(2.0, `a`) AS `a`, LOG(2.0, `b`) AS `b`
+      SELECT
+        LOG(2.0, `a`) AS `a`,
+        LOG(2.0, `b`) AS `b`
       FROM `df`
 
 ---
@@ -49,7 +59,11 @@
       lf %>% summarise(across(a:b, list(log, exp)))
     Output
       <SQL>
-      SELECT LN(`a`) AS `a_log`, EXP(`a`) AS `a_exp`, LN(`b`) AS `b_log`, EXP(`b`) AS `b_exp`
+      SELECT
+        LN(`a`) AS `a_log`,
+        EXP(`a`) AS `a_exp`,
+        LN(`b`) AS `b_log`,
+        EXP(`b`) AS `b_exp`
       FROM `df`
 
 # untranslatable functions are preserved
@@ -58,7 +72,9 @@
       lf %>% summarise(across(a:b, SQL_LOG))
     Output
       <SQL>
-      SELECT SQL_LOG(`a`) AS `a`, SQL_LOG(`b`) AS `b`
+      SELECT
+        SQL_LOG(`a`) AS `a`,
+        SQL_LOG(`b`) AS `b`
       FROM `df`
 
 # across() translates formulas
@@ -67,7 +83,9 @@
       lf %>% summarise(across(a:b, ~log(.x, 2)))
     Output
       <SQL>
-      SELECT LOG(2.0, `a`) AS `a`, LOG(2.0, `b`) AS `b`
+      SELECT
+        LOG(2.0, `a`) AS `a`,
+        LOG(2.0, `b`) AS `b`
       FROM `df`
 
 ---
@@ -76,7 +94,9 @@
       lf %>% summarise(across(a:b, list(~log(.x, 2))))
     Output
       <SQL>
-      SELECT LOG(2.0, `a`) AS `a`, LOG(2.0, `b`) AS `b`
+      SELECT
+        LOG(2.0, `a`) AS `a`,
+        LOG(2.0, `b`) AS `b`
       FROM `df`
 
 # across() translates NULL
@@ -85,7 +105,9 @@
       lf %>% mutate(across(a:b))
     Output
       <SQL>
-      SELECT `a`, `b`
+      SELECT
+        `a`,
+        `b`
       FROM `df`
 
 # old _at functions continue to work
@@ -98,7 +120,9 @@
       This warning is displayed only once per session.
     Output
       <SQL>
-      SELECT SUM(`a`) AS `a`, SUM(`b`) AS `b`
+      SELECT
+        SUM(`a`) AS `a`,
+        SUM(`b`) AS `b`
       FROM `df`
 
 ---
@@ -107,7 +131,9 @@
       lf %>% dplyr::summarise_at(dplyr::vars(a:b), sum)
     Output
       <SQL>
-      SELECT SUM(`a`) AS `a`, SUM(`b`) AS `b`
+      SELECT
+        SUM(`a`) AS `a`,
+        SUM(`b`) AS `b`
       FROM `df`
 
 ---
@@ -116,7 +142,9 @@
       lf %>% dplyr::summarise_at(dplyr::vars(a:b), ~sum(.))
     Output
       <SQL>
-      SELECT SUM(`a`) AS `a`, SUM(`b`) AS `b`
+      SELECT
+        SUM(`a`) AS `a`,
+        SUM(`b`) AS `b`
       FROM `df`
 
 # if_all/any works in filter()
@@ -145,7 +173,10 @@
       lf %>% mutate(c = if_all(a:b, ~. > 0))
     Output
       <SQL>
-      SELECT `a`, `b`, `a` > 0.0 AND `b` > 0.0 AS `c`
+      SELECT
+        `a`,
+        `b`,
+        `a` > 0.0 AND `b` > 0.0 AS `c`
       FROM `df`
 
 ---
@@ -154,6 +185,9 @@
       lf %>% mutate(c = if_any(a:b, ~. > 0))
     Output
       <SQL>
-      SELECT `a`, `b`, `a` > 0.0 OR `b` > 0.0 AS `c`
+      SELECT
+        `a`,
+        `b`,
+        `a` > 0.0 OR `b` > 0.0 AS `c`
       FROM `df`
 

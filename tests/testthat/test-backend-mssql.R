@@ -102,13 +102,13 @@ test_that("convert between bit and boolean as needed", {
 
 test_that("handles ORDER BY in subqueries", {
   expect_snapshot(
-    sql_query_select(simulate_mssql(), "x", "y", order_by = "z", subquery = TRUE)
+    sql_query_select(simulate_mssql(), ident("x"), ident("y"), order_by = "z", subquery = TRUE)
   )
 })
 
 test_that("custom limit translation", {
   expect_snapshot(
-    sql_query_select(simulate_mssql(), "x", "y", order_by = "z", limit = 10)
+    sql_query_select(simulate_mssql(), ident("x"), ident("y"), order_by = ident("z"), limit = 10)
   )
 })
 

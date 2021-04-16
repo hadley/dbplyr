@@ -23,6 +23,13 @@
   }
 
   base_scalar$`%>%` <- magrittr::`%>%`
+
+  op <- options()
+  op.dbplyr <- list(
+    dbplyr_indent_strategy = "indent"
+  )
+  toset <- !(names(op.dbplyr) %in% names(op))
+  if (any(toset)) options(op.dbplyr[toset])
 }
 
 # Silence R CMD check note:

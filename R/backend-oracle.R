@@ -40,18 +40,20 @@ sql_query_select.Oracle <- function(con, select, from, where = NULL,
                              limit = NULL,
                              distinct = FALSE,
                              ...,
-                             subquery = FALSE) {
+                             subquery = FALSE,
+                             lvl = 0) {
 
   sql_select_clauses(con,
-    select    = sql_clause_select(con, select, distinct),
-    from      = sql_clause_from(con, from),
-    where     = sql_clause_where(con, where),
-    group_by  = sql_clause_group_by(con, group_by),
-    having    = sql_clause_having(con, having),
-    order_by  = sql_clause_order_by(con, order_by, subquery, limit),
+    select    = sql_clause_select(con, select, distinct, lvl = lvl),
+    from      = sql_clause_from(con, from, lvl = lvl),
+    where     = sql_clause_where(con, where, lvl = lvl),
+    group_by  = sql_clause_group_by(con, group_by, lvl = lvl),
+    having    = sql_clause_having(con, having, lvl = lvl),
+    order_by  = sql_clause_order_by(con, order_by, subquery, limit, lvl = lvl),
     # Requires Oracle 12c, released in 2013
     limit =   if (!is.null(limit)) {
-      build_sql("FETCH FIRST ", as.integer(limit), " ROWS ONLY", con = con)
+      sql <- build_sql("FETCH FIRST ", as.integer(limit), " ROWS ONLY", con = con)
+      indent_lvl(sql, lvl)
     }
   )
 }
@@ -105,12 +107,12 @@ sql_table_analyze.Oracle <- function(con, table, ...) {
 }
 
 #' @export
-sql_query_wrap.Oracle <- function(con, from, name = unique_subquery_name(), ...) {
+sql_query_wrap.Oracle <- function(con, from, name = unique_subquery_name(), ..., lvl = 0) {
   # Table aliases in Oracle should not have an "AS": https://www.techonthenet.com/oracle/alias.php
   if (is.ident(from)) {
     build_sql("(", from, ") ", if (!is.null(name)) ident(name), con = con)
   } else {
-    build_sql("(", from, ") ", ident(name %||% unique_subquery_name()), con = con)
+    build_sql(ident_subquery(from, con, lvl), " ", ident(name %||% unique_subquery_name()), con = con)
   }
 }
 

@@ -29,44 +29,44 @@ print.join_query <- function(x, ...) {
 }
 
 #' @export
-sql_render.join_query <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render.join_query <- function(query, con = NULL, ..., subquery = FALSE, lvl = 0) {
   from_x <- dbplyr_sql_subquery(
     con,
-    sql_render(query$x, con, ..., subquery = TRUE),
-    name = "LHS"
+    sql_render(query$x, con, ..., subquery = TRUE, lvl = lvl + 1),
+    name = "LHS",
+    lvl = lvl
   )
   from_y <- dbplyr_sql_subquery(
     con,
-    sql_render(query$y, con, ..., subquery = TRUE),
-    name = "RHS"
+    sql_render(query$y, con, ..., subquery = TRUE, lvl = lvl + 1),
+    name = "RHS",
+    lvl = lvl
   )
 
   dbplyr_query_join(con, from_x, from_y,
     vars = query$vars,
     type = query$type,
     by = query$by,
-    na_matches = query$na_matches
+    na_matches = query$na_matches,
+    lvl = lvl
   )
 }
 
 # SQL generation ----------------------------------------------------------
 
 
-sql_join_vars <- function(con, vars) {
-  sql_vector(
-    mapply(
-      FUN = sql_join_var,
-      alias = vars$alias,
-      x = vars$x,
-      y = vars$y,
-      MoreArgs = list(con = con, all_x = vars$all_x, all_y = vars$all_y),
-      SIMPLIFY = FALSE,
-      USE.NAMES = TRUE
-    ),
-    parens = FALSE,
-    collapse = ", ",
-    con = con
+sql_join_vars <- function(con, vars, lvl = 0) {
+  join_vars_list <- mapply(
+    FUN = sql_join_var,
+    alias = vars$alias,
+    x = vars$x,
+    y = vars$y,
+    MoreArgs = list(con = con, all_x = vars$all_x, all_y = vars$all_y),
+    SIMPLIFY = FALSE,
+    USE.NAMES = TRUE
   )
+
+  sql(unlist(join_vars_list))
 }
 
 sql_join_var <- function(con, alias, x, y, all_x, all_y) {
@@ -103,12 +103,10 @@ sql_join_tbls <- function(con, by, na_matches = "never") {
       compare <- paste0(lhs, " = ", rhs)
     }
 
-    on <- sql_vector(compare, collapse = " AND ", parens = TRUE, con = con)
+    sql(compare)
   } else if (length(by$on) > 0) {
-    on <- build_sql("(", by$on, ")", con = con)
+    by$on
   }
-
-  on
 }
 
 sql_table_prefix <- function(con, var, table = NULL) {

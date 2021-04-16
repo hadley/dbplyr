@@ -6,9 +6,13 @@
     Message <message>
       `summarise()` has grouped output by 'x'. You can override using the `.groups` argument.
     Output
-      <SQL> SELECT `x`, `y`
+      <SQL> SELECT
+        `x`,
+        `y`
       FROM `df`
-      GROUP BY `x`, `y`
+      GROUP BY
+        `x`,
+        `y`
 
 ---
 
@@ -20,7 +24,9 @@
     Code
       out %>% sql_render
     Output
-      <SQL> SELECT `x`, COUNT(*) AS `n`
+      <SQL> SELECT
+        `x`,
+        COUNT(*) AS `n`
       FROM `verb-summarise`
       GROUP BY `x`
 

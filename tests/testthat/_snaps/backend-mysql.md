@@ -22,7 +22,6 @@
       FROM `df` AS `LHS`
       LEFT JOIN `df` AS `RHS`
       ON (`LHS`.`x` <=> `RHS`.`x`)
-      
 
 # can explain
 

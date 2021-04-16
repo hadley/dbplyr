@@ -11,7 +11,9 @@
       lf %>% select(2:1) %>% select(2:1)
     Output
       <SQL>
-      SELECT `x`, `y`
+      SELECT
+        `x`,
+        `y`
       FROM `df`
 
 ---
@@ -20,7 +22,9 @@
       lf %>% select(2:1) %>% select(2:1) %>% select(2:1)
     Output
       <SQL>
-      SELECT `y`, `x`
+      SELECT
+        `y`,
+        `x`
       FROM `df`
 
 ---

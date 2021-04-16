@@ -4,7 +4,9 @@
       db %>% count(g)
     Output
       <SQL>
-      SELECT `g`, COUNT(*) AS `n`
+      SELECT
+        `g`,
+        COUNT(*) AS `n`
       FROM `df`
       GROUP BY `g`
 
@@ -14,7 +16,9 @@
       db %>% count(g, wt = x)
     Output
       <SQL>
-      SELECT `g`, SUM(`x`) AS `n`
+      SELECT
+        `g`,
+        SUM(`x`) AS `n`
       FROM `df`
       GROUP BY `g`
 
@@ -24,7 +28,9 @@
       db %>% count(g, sort = TRUE)
     Output
       <SQL>
-      SELECT `g`, COUNT(*) AS `n`
+      SELECT
+        `g`,
+        COUNT(*) AS `n`
       FROM `df`
       GROUP BY `g`
       ORDER BY `n` DESC

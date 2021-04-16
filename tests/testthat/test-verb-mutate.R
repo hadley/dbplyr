@@ -135,7 +135,7 @@ test_that("sequence of operations work", {
 
 test_that("quoting for rendering mutated grouped table", {
   out <- memdb_frame(x = 1, y = 2) %>% mutate(y = x)
-  expect_match(out %>% sql_render, "^SELECT `x`, `x` AS `y`\nFROM `[^`]*`$")
+  expect_match(out %>% sql_render, "^SELECT\n  `x`,\n  `x` AS `y`\nFROM `[^`]*`$")
   expect_equal(out %>% collect, tibble(x = 1, y = 1))
 })
 

@@ -48,33 +48,33 @@ sql_build.ident <- function(op, con = NULL, ...) {
 #' @param subquery Is this SQL going to be used in a subquery?
 #'   This is important because you can place a bare table name in a subquery
 #'   and  ORDER BY does not work in subqueries.
-sql_render <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render <- function(query, con = NULL, ..., subquery = FALSE, lvl = 0) {
   UseMethod("sql_render")
 }
 
 #' @export
-sql_render.tbl_lazy <- function(query, con = query$src$con, ..., subquery = FALSE) {
-  sql_render(query$ops, con = con, ..., subquery = subquery)
+sql_render.tbl_lazy <- function(query, con = query$src$con, ..., subquery = FALSE, lvl = 0) {
+  sql_render(query$ops, con = con, ..., subquery = subquery, lvl = lvl)
 }
 
 #' @export
-sql_render.op <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render.op <- function(query, con = NULL, ..., subquery = FALSE, lvl = 0) {
   qry <- sql_build(query, con = con, ...)
   qry <- sql_optimise(qry, con = con, ..., subquery = subquery)
-  sql_render(qry, con = con, ..., subquery = subquery)
+  sql_render(qry, con = con, ..., subquery = subquery, lvl = lvl)
 }
 
 #' @export
-sql_render.sql <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render.sql <- function(query, con = NULL, ..., subquery = FALSE, lvl = 0) {
   query
 }
 
 #' @export
-sql_render.ident <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render.ident <- function(query, con = NULL, ..., subquery = FALSE, lvl = 0) {
   if (subquery) {
     query
   } else {
-    dbplyr_query_select(con, sql("*"), query)
+    dbplyr_query_select(con, sql("*"), query, lvl = lvl)
   }
 }
 
