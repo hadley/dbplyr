@@ -35,9 +35,6 @@ airports <- copy_to(con, nycflights13::airports)
       show_query()
     ```
     
-    (As you can see here, the generated SQL isn't always as minimal as you
-    might generate by hand.)
-    
 *  `filter()` generates a `WHERE` clause:
     
     ```{r}
@@ -59,7 +56,7 @@ airports <- copy_to(con, nycflights13::airports)
     ```{r}
     flights %>%
       group_by(month, day) %>%
-      summarise(delay = mean(dep_delay)) %>%
+      summarise(delay = mean(dep_delay, na.rm = TRUE)) %>%
       show_query()
     ```
 
