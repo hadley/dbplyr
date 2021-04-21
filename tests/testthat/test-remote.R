@@ -6,6 +6,28 @@ test_that("remote_name returns null for computed tables", {
   expect_equal(remote_name(mf2), NULL)
 })
 
+test_that("remote_name ignores the last group_by() operation(s)", {
+  mf <- memdb_frame(x = 5, .name = "asdf")
+  for (i in seq(4)) {
+    mf <- mf %>% dplyr::group_by(x)
+    expect_equal(remote_name(mf), ident("asdf"))
+  }
+})
+
+test_that("remote_name ignores the last ungroup() operation(s)", {
+  mf <- memdb_frame(x = 5, .name = "ghjkl") %>% dplyr::group_by(x)
+  for (i in seq(4)) {
+    mf <- mf %>% dplyr::ungroup()
+    expect_equal(remote_name(mf), ident("ghjkl"))
+  }
+})
+
+test_that("result from dplyr::compute() has remote name", {
+  mf <- memdb_frame(x = 5, .name = "zxcvb")
+  mf <- mf %>% dplyr::mutate(y = 5) %>% dplyr::compute()
+  expect_false(is.null(remote_name(mf)))
+})
+
 test_that("can retrieve query, src and con metadata", {
   mf <- memdb_frame(x = 5)
 

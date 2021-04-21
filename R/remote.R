@@ -22,10 +22,32 @@
 #' remote_con(mf2)
 #' remote_query(mf2)
 remote_name <- function(x) {
-  if (!inherits(x$ops, "op_base"))
-    return()
+  UseMethod("remote_name")
+}
 
-  x$ops$x
+#' @export
+remote_name.tbl_lazy <- function(x) {
+  remote_name(x$ops)
+}
+
+#' @export
+remote_name.op_base <- function(x) {
+  x$x
+}
+
+#' @export
+remote_name.op_group_by <- function(x) {
+  remote_name(x$x)
+}
+
+#' @export
+remote_name.op_ungroup <- function(x) {
+  remote_name(x$x)
+}
+
+#' @export
+remote_name.default <- function(x) {
+  return()
 }
 
 #' @export
