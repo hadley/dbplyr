@@ -5,6 +5,7 @@ select_query <- function(from,
                          where = character(),
                          group_by = character(),
                          having = character(),
+                         window = character(),
                          order_by = character(),
                          limit = NULL,
                          distinct = FALSE) {
@@ -13,6 +14,7 @@ select_query <- function(from,
   stopifnot(is.character(where))
   stopifnot(is.character(group_by))
   stopifnot(is.character(having))
+  stopifnot(is.character(window))
   stopifnot(is.character(order_by))
   stopifnot(is.null(limit) || (is.numeric(limit) && length(limit) == 1L))
   stopifnot(is.logical(distinct), length(distinct) == 1L)
@@ -24,6 +26,7 @@ select_query <- function(from,
       where = where,
       group_by = group_by,
       having = having,
+      window = window,
       order_by = order_by,
       distinct = distinct,
       limit = limit
@@ -45,6 +48,7 @@ print.select_query <- function(x, ...) {
   if (length(x$select))   cat("Select:   ", named_commas(x$select), "\n", sep = "")
   if (length(x$where))    cat("Where:    ", named_commas(x$where), "\n", sep = "")
   if (length(x$group_by)) cat("Group by: ", named_commas(x$group_by), "\n", sep = "")
+  if (length(x$window))   cat("Window:   ", named_commas(x$window), "\n", sep = "")
   if (length(x$order_by)) cat("Order by: ", named_commas(x$order_by), "\n", sep = "")
   if (length(x$having))   cat("Having:   ", named_commas(x$having), "\n", sep = "")
   if (length(x$limit))    cat("Limit:    ", x$limit, "\n", sep = "")
@@ -92,6 +96,7 @@ select_query_clauses <- function(x, subquery = FALSE) {
     having =   length(x$having) > 0,
     select =   !identical(x$select, sql("*")),
     distinct = x$distinct,
+    window = length(x$window) > 0,
     order_by = (!subquery || !is.null(x$limit)) && length(x$order_by) > 0,
     limit    = !is.null(x$limit)
   )
@@ -111,6 +116,7 @@ sql_render.select_query <- function(query, con, ..., subquery = FALSE) {
     where = query$where,
     group_by = query$group_by,
     having = query$having,
+    window = query$window,
     order_by = query$order_by,
     limit = query$limit,
     distinct = query$distinct,

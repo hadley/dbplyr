@@ -36,6 +36,7 @@ dbplyr_edition.Oracle <- function(con) {
 #' @export
 sql_query_select.Oracle <- function(con, select, from, where = NULL,
                              group_by = NULL, having = NULL,
+                             window = NULL,
                              order_by = NULL,
                              limit = NULL,
                              distinct = FALSE,
@@ -48,6 +49,7 @@ sql_query_select.Oracle <- function(con, select, from, where = NULL,
     where     = sql_clause_where(con, where),
     group_by  = sql_clause_group_by(con, group_by),
     having    = sql_clause_having(con, having),
+    window    = sql_clause_window(con, window),
     order_by  = sql_clause_order_by(con, order_by, subquery, limit),
     # Requires Oracle 12c, released in 2013
     limit =   if (!is.null(limit)) {

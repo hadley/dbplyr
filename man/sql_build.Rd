@@ -27,6 +27,7 @@ select_query(
   where = character(),
   group_by = character(),
   having = character(),
+  window = character(),
   order_by = character(),
   limit = NULL,
   distinct = FALSE

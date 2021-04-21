@@ -42,6 +42,7 @@ sql_query_select(
   where = NULL,
   group_by = NULL,
   having = NULL,
+  window = NULL,
   order_by = NULL,
   limit = NULL,
   distinct = FALSE,
