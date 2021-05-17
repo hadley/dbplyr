@@ -1,5 +1,7 @@
 # dbplyr (development version)
 
+* `nesting()` now supports the `.name_repair` argument (@mgirlich, #654).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)

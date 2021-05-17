@@ -54,6 +54,25 @@ test_that("expand() errors when expected", {
   expect_snapshot_error(tidyr::expand(memdb_frame(x = 1), x = NULL))
 })
 
+test_that("nesting() respects .name_repair", {
+  expect_snapshot_error(
+    tidyr::expand(
+      memdb_frame(x = 1, y = 1),
+      nesting(x, x = x + 1)
+    )
+  )
+
+  vars <- suppressMessages(
+    tidyr::expand(
+      memdb_frame(x = 1, y = 1),
+      nesting(x, x = x + 1, .name_repair = "unique")
+    ) %>%
+      op_vars()
+  )
+
+  expect_equal(vars, c("x...1", "x...2"))
+})
+
 test_that("expand respect .name_repair", {
   vars <- suppressMessages(
     memdb_frame(x = integer(), z = integer()) %>%
