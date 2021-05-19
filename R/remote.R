@@ -42,8 +42,13 @@ remote_con <- function(x) {
 
 #' @export
 #' @rdname remote_name
-remote_query <- function(x) {
-  db_sql_render(remote_con(x), x)
+remote_query <- function(x, cte = FALSE) {
+  if (cte) {
+    query_list <- db_sql_render(remote_con(x), x, query_list = list())
+    cte_render(query_list, remote_con(x))
+  } else {
+    db_sql_render(remote_con(x), x)
+  }
 }
 
 #' @export

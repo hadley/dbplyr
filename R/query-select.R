@@ -100,14 +100,11 @@ select_query_clauses <- function(x, subquery = FALSE) {
 }
 
 #' @export
-sql_render.select_query <- function(query, con, ..., subquery = FALSE) {
-  from <- dbplyr_sql_subquery(con,
-    sql_render(query$from, con, ..., subquery = TRUE),
-    name = NULL
-  )
+sql_render.select_query <- function(query, con, ..., subquery = FALSE, query_list = NULL) {
+  query_list <- sql_render(query$from, con, ..., subquery = TRUE, query_list = query_list)
 
-  dbplyr_query_select(
-    con, query$select, from,
+  select_sql <- dbplyr_query_select(
+    con, query$select, query_list_from(query_list, con),
     where = query$where,
     group_by = query$group_by,
     having = query$having,
@@ -115,8 +112,11 @@ sql_render.select_query <- function(query, con, ..., subquery = FALSE) {
     limit = query$limit,
     distinct = query$distinct,
     ...,
-    subquery = subquery
+    subquery = subquery,
+    query_list = query_list
   )
+
+  cte_wrap(query_list, select_sql, render = TRUE)
 }
 
 warn_drop_order_by <- function() {

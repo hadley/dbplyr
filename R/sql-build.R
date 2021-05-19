@@ -24,7 +24,7 @@
 #'   without an active database connection.
 #' @param ... Other arguments passed on to the methods. Not currently used.
 sql_build <- function(op, con = NULL, ...) {
-  unique_subquery_name_reset()
+  # unique_subquery_name_reset()
   UseMethod("sql_build")
 }
 
@@ -48,33 +48,94 @@ sql_build.ident <- function(op, con = NULL, ...) {
 #' @param subquery Is this SQL going to be used in a subquery?
 #'   This is important because you can place a bare table name in a subquery
 #'   and  ORDER BY does not work in subqueries.
-sql_render <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render <- function(query, con = NULL, ..., subquery = FALSE, query_list = NULL) {
   UseMethod("sql_render")
 }
 
 #' @export
-sql_render.tbl_lazy <- function(query, con = query$src$con, ..., subquery = FALSE) {
-  sql_render(query$ops, con = con, ..., subquery = subquery)
+sql_render.tbl_lazy <- function(query, con = query$src$con, ..., subquery = FALSE, query_list = NULL) {
+  sql_render(query$ops, con = con, ..., subquery = subquery, query_list = query_list)
 }
 
+cte_render <- function(query_list, con) {
+  query_list <- purrr::keep(query_list, "render")
+
+  n <- length(query_list)
+  if (n == 1) {
+    return(query_list[[1]]$query)
+  }
+
+  cte_queries <- purrr::map_chr(query_list[-n], "query")
+  cte_names <- purrr::map_chr(query_list[-n], "name")
+  ctes <- purrr::map2(cte_names, cte_queries,
+    function(name, query) {
+      build_sql(ident(name), " AS (\n", sql(query), "\n)", con = con)
+    }
+  )
+  cte_query <- sql_vector(ctes, parens = FALSE, collapse = ",\n", con = con)
+
+  build_sql("WITH ", cte_query, "\n", query_list[[n]]$query, con = con)
+}
+
+cte_wrap <- function(query_list, sql, render = TRUE) {
+  if (is.list(query_list)) {
+    id <- vctrs::vec_match(as.character(sql), purrr::map_chr(query_list, "query"))
+
+    if (!is.na(id)) {
+      query_entry <- query_list[[id]]
+      query_entry$render <- FALSE
+    } else {
+      if (is.ident(sql)) {
+        name <- sql
+      } else {
+        name <- unique_subquery_name()
+      }
+      query_entry <- list(query = sql, name = name, render = render)
+    }
+
+    append(query_list, list(query_entry))
+  } else {
+    sql
+  }
+}
+
+query_list_from <- function(query_list, con, name = NULL) {
+  if (is.list(query_list)) {
+    last_query <- dplyr::last(query_list)
+    purrr::set_names(maybe_ident(last_query$name), name)
+  } else {
+    dbplyr_sql_subquery(con, query_list, name = name)
+  }
+}
+
+maybe_ident <- function(x) {
+  if (is.ident(x)) {
+    x
+  } else {
+    ident(x)
+  }
+}
+
+
 #' @export
-sql_render.op <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render.op <- function(query, con = NULL, ..., subquery = FALSE, query_list = NULL) {
   qry <- sql_build(query, con = con, ...)
   qry <- sql_optimise(qry, con = con, ..., subquery = subquery)
-  sql_render(qry, con = con, ..., subquery = subquery)
+  sql_render(qry, con = con, ..., subquery = subquery, query_list = query_list)
 }
 
 #' @export
-sql_render.sql <- function(query, con = NULL, ..., subquery = FALSE) {
-  query
+sql_render.sql <- function(query, con = NULL, ..., subquery = FALSE, query_list = NULL) {
+  cte_wrap(query_list, query, render = TRUE)
 }
 
 #' @export
-sql_render.ident <- function(query, con = NULL, ..., subquery = FALSE) {
+sql_render.ident <- function(query, con = NULL, ..., subquery = FALSE, query_list = NULL) {
   if (subquery) {
-    query
+    cte_wrap(query_list, query, render = FALSE)
   } else {
-    dbplyr_query_select(con, sql("*"), query)
+    query <- dbplyr_query_select(con, sql("*"), query)
+    cte_wrap(query_list, query, render = TRUE)
   }
 }
 
