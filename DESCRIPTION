@@ -30,7 +30,7 @@ Imports:
     assertthat (>= 0.2.0),
     blob (>= 1.2.0),
     DBI (>= 1.0.0),
-    dplyr (>= 1.0.4),
+    dplyr (>= 1.0.6),
     ellipsis,
     glue (>= 1.2.0),
     lifecycle (>= 1.0.0),

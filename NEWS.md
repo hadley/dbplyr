@@ -1,5 +1,7 @@
 # dbplyr (development version)
 
+* `add_count()` now doesn't change the groups of the input (@mgirlich, #614).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)

@@ -29,6 +29,16 @@
       GROUP BY `g`
       ORDER BY `n` DESC
 
+---
+
+    Code
+      db %>% add_count(g, sort = TRUE)
+    Output
+      <SQL>
+      SELECT `g`, `x`, COUNT(*) OVER (PARTITION BY `g`) AS `n`
+      FROM `df`
+      ORDER BY `n` DESC
+
 # complains about bad names
 
     Code

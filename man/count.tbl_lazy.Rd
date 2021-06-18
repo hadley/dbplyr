@@ -2,10 +2,13 @@
 % Please edit documentation in R/verb-count.R
 \name{count.tbl_lazy}
 \alias{count.tbl_lazy}
+\alias{add_count.tbl_lazy}
 \alias{tally.tbl_lazy}
 \title{Count observations by group}
 \usage{
 \method{count}{tbl_lazy}(x, ..., wt = NULL, sort = FALSE, name = NULL)
+
+\method{add_count}{tbl_lazy}(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = deprecated())
 
 \method{tally}{tbl_lazy}(x, wt = NULL, sort = FALSE, name = NULL)
 }
@@ -29,6 +32,8 @@ Can be \code{NULL} or a variable:
 
 If omitted, it will default to \code{n}. If there's already a column called \code{n},
 it will error, and require you to specify the name.}
+
+\item{.drop}{Not supported for lazy tables.}
 }
 \description{
 These are methods for the dplyr \code{\link[=count]{count()}} and \code{\link[=tally]{tally()}} generics. They
