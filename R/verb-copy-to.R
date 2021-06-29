@@ -81,7 +81,7 @@ copy_to.src_sql <- function(dest, df, name = deparse(substitute(df)),
       ...
     )
 
-    out <- tbl(dest, name)
+    out <- tbl(dest, name, vars = names(df))
   }
 
   invisible(out)
