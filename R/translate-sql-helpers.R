@@ -132,16 +132,59 @@ copy_env <- function(from, to = NULL, parent = parent.env(from)) {
 #' @param pad If `TRUE`, the default, pad the infix operator with spaces.
 #' @export
 sql_infix <- function(f, pad = TRUE) {
+  # (x1 <- expr((2 - 1) * x))
+  # #> (2 - 1) * x
+  #
+  # (x2 <- expr(!!expr(2 - 1) * x))
+  # #> (2 - 1) * x
+  #
+  # `x1` and `x2` look the same when printed but their AST (abstract syntax tree)
+  # is different:
+  # lobstr::ast(expr((2 - 1) * x))
+  # #> █─expr
+  # #> └─█─`*`
+  # #>   ├─█─`(`
+  # #>   │ └─█─`-`
+  # #>   │   ├─2
+  # #>   │   └─1
+  # #>   └─x
+  #
+  # lobstr::ast(expr(!!expr(2 - 1) * x))
+  # #> █─expr
+  # #> └─█─`*`
+  # #>   ├─█─`-`
+  # #>   │ ├─2
+  # #>   │ └─1
+  # #>   └─x
+  #
+  # the missing paranthese "(" is an issue when translating infix expression.
+  # This is fixed with `escape_infix_expr()`
+  # see https://github.com/tidyverse/dbplyr/issues/634
   assert_that(is_string(f))
 
   if (pad) {
     function(x, y) {
+      x <- escape_infix_expr(enquo(x))
+      y <- escape_infix_expr(enquo(y))
+
       build_sql(x, " ", sql(f), " ", y)
     }
   } else {
     function(x, y) {
+      x <- escape_infix_expr(enquo(x))
+      y <- escape_infix_expr(enquo(y))
+
       build_sql(x, sql(f), y)
     }
+  }
+}
+
+escape_infix_expr <- function(x) {
+  infix_calls <- c("+", "-", "*", "/", "%%", "^")
+  if (quo_is_call(x, n = 2) && call_name(x) %in% infix_calls) {
+    build_sql("(", eval_tidy(x), ")")
+  } else {
+    eval_tidy(x)
   }
 }
 

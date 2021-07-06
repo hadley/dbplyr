@@ -1,5 +1,9 @@
 # dbplyr (development version)
 
+* Partially evaluated expressions with infix operations are now correctly
+  translated. For example `translate_sql(!!expr(2 - 1) * x)` now works
+  (@mgirlich, #634).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)
