@@ -11,6 +11,8 @@ test_that("generates custom sql", {
 
   lf <- lazy_frame(x = 1, con = con)
   expect_snapshot(left_join(lf, lf, by = "x", na_matches = "na"))
+
+  expect_snapshot(slice_sample(lf, 5))
 })
 
 # live database -----------------------------------------------------------

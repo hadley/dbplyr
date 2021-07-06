@@ -44,7 +44,7 @@ arrange.tbl_lazy <- function(.data, ..., .by_group = FALSE) {
 
 #' @export
 op_sort.op_arrange <- function(op) {
-  c(op_sort(op$x), op$dots)
+  op$dots
 }
 
 #' @export

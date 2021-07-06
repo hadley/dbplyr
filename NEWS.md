@@ -1,5 +1,7 @@
 # dbplyr (development version)
 
+* `slice_sample()` now works for MySQL/MariaDB (@mgirlich, #617).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)
