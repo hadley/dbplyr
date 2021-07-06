@@ -35,6 +35,13 @@ test_that("transmute includes all needed variables", {
   expect_snapshot(out)
 })
 
+test_that("transmute keeps group variables", {
+  lf <- lazy_frame(x = 1, y = 2)
+  out <- lf %>% group_by(x) %>% transmute(z = 1)
+  expect_equal(op_vars(out), c("x", "z"))
+  expect_snapshot(out)
+})
+
 test_that("queries are not nested unnecessarily", {
   # Should only be one query deep
   sql <- memdb_frame(x = 1) %>%

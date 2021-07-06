@@ -34,6 +34,9 @@ transmute.tbl_lazy <- function(.data, ...) {
   dots <- quos(..., .named = TRUE)
   dots <- partial_eval_dots(dots, vars = op_vars(.data))
 
+  missing_group_vars <- syms(setdiff(group_vars(.data), names(dots)))
+  dots <- c(set_names(missing_group_vars), dots)
+
   nest_vars(.data, dots, character())
 }
 

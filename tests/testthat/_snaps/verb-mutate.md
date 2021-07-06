@@ -19,6 +19,15 @@
       FROM (SELECT `x` / 2.0 AS `x`, `y`
       FROM `df`) `q01`
 
+# transmute keeps group variables
+
+    Code
+      out
+    Output
+      <SQL>
+      SELECT `x`, 1.0 AS `z`
+      FROM `df`
+
 # mutate generates subqueries as needed
 
     Code
