@@ -107,6 +107,9 @@ sql_translation.PqConnection <- function(con) {
       },
 
       # lubridate functions
+      week = function(x) {
+        sql_expr(EXTRACT(WEEK %FROM% !!x))
+      },
       month = function(x, label = FALSE, abbr = TRUE) {
         if (!label) {
           sql_expr(EXTRACT(MONTH %FROM% !!x))
