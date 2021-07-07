@@ -1,5 +1,7 @@
 # dbplyr (development version)
 
+* Fix incorrect SQL in `fill()` translation for SQL Server (#651, @mgirlich).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)
