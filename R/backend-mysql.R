@@ -59,6 +59,8 @@ sql_translation.MariaDBConnection <- function(con) {
       },
       as.character = sql_cast("CHAR"),
 
+      random = function() sql_expr(RAND()),
+
       # string functions ------------------------------------------------
       paste = sql_paste(" "),
       paste0 = sql_paste(""),
