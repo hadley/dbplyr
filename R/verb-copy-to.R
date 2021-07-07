@@ -87,6 +87,58 @@ copy_to.src_sql <- function(dest, df, name = deparse(substitute(df)),
   invisible(out)
 }
 
+#' @export
+db_values <- function(con, df, name = deparse(substitute(df))) {
+  tbl(
+    src = con,
+    from = sql_values(con, df),
+    vars = colnames(df)
+  )
+}
+
+sql_values <- function(con, df) {
+  UseMethod("sql_values")
+}
+
+#' @export
+sql_values.DBIConnection <- function(con, df) {
+  sql_values_clause(con, df)
+}
+
+#' @export
+sql_values.MySQLConnection <- function(con, df) {
+  sql_values_clause(con, df, row = TRUE)
+}
+
+#' @export
+sql_values.MariaDBConnection <- sql_values.MySQLConnection
+
+sql_values_clause <- function(con, df, row = FALSE) {
+  values <- purrr::map(df, escape, con = con, collapse = NULL, parens = FALSE)
+  rows <- purrr::pmap(
+    unname(values),
+    function(...) {
+      dots <- list(...)
+      out <- sql_vector(dots, con = con, collapse = ", ")
+      if (row) {
+        out <- sql(paste0("ROW", out))
+      }
+
+      out
+    }
+  )
+
+  sim_data <- rep_named(colnames(df), list(NULL))
+  cols_clause <- escape(sim_data, con = con, parens = FALSE)
+  value_clause <- sql_vector(rows, collapse = ",\n  ", con = con, parens = FALSE)
+  build_sql(
+    "SELECT ", cols_clause, " WHERE false\n",
+    "UNION ALL\n",
+    "VALUES\n  ", value_clause,
+    con = con
+  )
+}
+
 #' @importFrom dplyr auto_copy
 #' @export
 auto_copy.tbl_sql <- function(x, y, copy = FALSE, ...) {
