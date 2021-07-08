@@ -18,7 +18,9 @@ join_query(
   type = "inner",
   by = NULL,
   suffix = c(".x", ".y"),
-  na_matches = FALSE
+  na_matches = FALSE,
+  lhs_as = "LHS",
+  rhs_as = "RHS"
 )
 
 select_query(
@@ -32,7 +34,15 @@ select_query(
   distinct = FALSE
 )
 
-semi_join_query(x, y, anti = FALSE, by = NULL, na_matches = FALSE)
+semi_join_query(
+  x,
+  y,
+  anti = FALSE,
+  by = NULL,
+  na_matches = FALSE,
+  lhs_as = "LHS",
+  rhs_as = "RHS"
+)
 
 set_op_query(x, y, type = type, all = FALSE)
 

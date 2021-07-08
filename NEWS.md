@@ -1,5 +1,8 @@
 # dbplyr (development version)
 
+* The `*_join()` verbs now have arguments `lhs_as` and `rhs_as` that allow to
+  specify the table alias to use in the SQL query (@mgirlich, #637).
+
 # dbplyr 2.1.1
 
 * New support for Snowflake (@edgararuiz)

@@ -256,11 +256,11 @@ sql_select.DBIConnection <- function(con, select, from, where = NULL,
 
 #' @rdname db-sql
 #' @export
-sql_query_join <- function(con, x, y, vars, type = "inner", by = NULL, na_matches = FALSE, ...) {
+sql_query_join <- function(con, x, y, vars, type = "inner", by = NULL, na_matches = FALSE, lhs_as = "LHS", rhs_as = "RHS", ...) {
   UseMethod("sql_query_join")
 }
 #' @export
-sql_query_join.DBIConnection <- function(con, x, y, vars, type = "inner", by = NULL, na_matches = FALSE, ...) {
+sql_query_join.DBIConnection <- function(con, x, y, vars, type = "inner", by = NULL, na_matches = FALSE, lhs_as = "LHS", rhs_as = "RHS", ...) {
   JOIN <- switch(
     type,
     left = sql("LEFT JOIN"),
@@ -271,8 +271,11 @@ sql_query_join.DBIConnection <- function(con, x, y, vars, type = "inner", by = N
     stop("Unknown join type:", type, call. = FALSE)
   )
 
-  select <- sql_join_vars(con, vars)
-  on <- sql_join_tbls(con, by, na_matches = na_matches)
+  x <- dbplyr_sql_subquery(con, x, name = lhs_as)
+  y <- dbplyr_sql_subquery(con, y, name = rhs_as)
+
+  select <- sql_join_vars(con, vars, lhs_as = lhs_as, rhs_as = rhs_as)
+  on <- sql_join_tbls(con, by, na_matches = na_matches, lhs_as = lhs_as, rhs_as = rhs_as)
 
   # Wrap with SELECT since callers assume a valid query is returned
   build_sql(
@@ -288,25 +291,30 @@ dbplyr_query_join <- function(con, ...) {
 }
 #' @export
 #' @importFrom dplyr sql_join
-sql_join.DBIConnection <- function(con, x, y, vars, type = "inner", by = NULL, na_matches = FALSE, ...) {
+sql_join.DBIConnection <- function(con, x, y, vars, type = "inner", by = NULL, na_matches = FALSE, ..., lhs_as = "LHS", rhs_as = "RHS") {
   sql_query_join(
     con, x, y, vars,
     type = type,
     by = by,
     na_matches = na_matches,
+    lhs_as = lhs_as,
+    rhs_as = rhs_as,
     ...
   )
 }
 
 #' @rdname db-sql
 #' @export
-sql_query_semi_join <- function(con, x, y, anti = FALSE, by = NULL, ...) {
+sql_query_semi_join <- function(con, x, y, anti = FALSE, by = NULL, ..., lhs_as = "LHS", rhs_as = "RHS") {
   UseMethod("sql_query_semi_join")
 }
 #' @export
-sql_query_semi_join.DBIConnection <- function(con, x, y, anti = FALSE, by = NULL, ...) {
-  lhs <- escape(ident("LHS"), con = con)
-  rhs <- escape(ident("RHS"), con = con)
+sql_query_semi_join.DBIConnection <- function(con, x, y, anti = FALSE, by = NULL, ..., lhs_as = "LHS", rhs_as = "RHS") {
+  x <- dbplyr_sql_subquery(con, x, name = lhs_as)
+  y <- dbplyr_sql_subquery(con, y, name = rhs_as)
+
+  lhs <- escape(ident(lhs_as), con = con)
+  rhs <- escape(ident(rhs_as), con = con)
 
   on <- sql_join_tbls(con, by)
 
@@ -324,8 +332,8 @@ dbplyr_query_semi_join <- function(con, ...) {
 }
 #' @export
 #' @importFrom dplyr sql_semi_join
-sql_semi_join.DBIConnection <- function(con, x, y, anti = FALSE, by = NULL, ...) {
-  sql_query_semi_join(con, x, y, anti = anti, by = by, ...)
+sql_semi_join.DBIConnection <- function(con, x, y, anti = FALSE, by = NULL, ..., lhs_as = "LHS", rhs_as = "RHS") {
+  sql_query_semi_join(con, x, y, anti = anti, by = by, ..., lhs_as = lhs_as, rhs_as = rhs_as)
 }
 
 #' @rdname db-sql

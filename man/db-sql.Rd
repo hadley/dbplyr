@@ -57,10 +57,21 @@ sql_query_join(
   type = "inner",
   by = NULL,
   na_matches = FALSE,
+  lhs_as = "LHS",
+  rhs_as = "RHS",
   ...
 )
 
-sql_query_semi_join(con, x, y, anti = FALSE, by = NULL, ...)
+sql_query_semi_join(
+  con,
+  x,
+  y,
+  anti = FALSE,
+  by = NULL,
+  ...,
+  lhs_as = "LHS",
+  rhs_as = "RHS"
+)
 
 sql_query_set_op(con, x, y, method, ..., all = FALSE)
 }
